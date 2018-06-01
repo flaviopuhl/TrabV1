@@ -1,0 +1,170 @@
+/*
+   The circuit:
+ * LCD RS pin to digital pin 12
+ * LCD Enable pin to digital pin 11
+ * LCD D4 pin to digital pin 5
+ * LCD D5 pin to digital pin 4
+ * LCD D6 pin to digital pin 3
+ * LCD D7 pin to digital pin 2
+ * LCD R/W pin to ground
+ * LCD VSS pin to ground
+ * LCD VCC pin to 5V
+ * 10K resistor:
+ * ends to +5V and ground
+ * wiper to LCD VO pin (pin 3)
+
+ Library originally added 18 Apr 2008
+ by David A. Mellis
+ library modified 5 Jul 2009
+ by Limor Fried (http://www.ladyada.net)
+ example added 9 Jul 2009
+ by Tom Igoe
+ modified 22 Nov 2010
+ by Tom Igoe
+
+ This example code is in the public domain.
+
+ http://www.arduino.cc/en/Tutorial/LiquidCrystal
+ */
+
+// include the library code:
+#include <LiquidCrystal.h>
+
+// initialize the library with the numbers of the interface pins
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+
+// constants won't change. They're used here to
+// set pin numbers:
+const int UP = A2;		     // botão menu para cima
+const int DOWN = A1;		 // botão menu para baixo
+const int ENTER = A0;	     // botão enter
+
+const int LEDA = 6;      	 // LED 1
+const int LEDB = 7;      	 // LED 2
+const int LEDC = 8;      	 // LED 3
+const int LEDD = 9;      	 // LED 4
+
+// variables will change:
+int buttonStateUP = 0;         // variable for reading the pushbutton status
+int buttonStateDOWN = 0;
+int buttonStateENTER = 0;
+
+int readingUP = 0;
+int readingDOWN = 0;
+int readingENTER = 0;
+
+int lastButtonStateUP = 0;         // variable for reading the pushbutton status
+int lastButtonStateDOWN = 0;
+int lastButtonStateENTER = 0;
+
+int Index=0;
+int Menu = 0;
+
+
+void setup() {
+  // set up the LCD's number of columns and rows:
+  lcd.begin(16, 2);
+  // Print a message to the LCD.
+  //lcd.print("hello, world!");
+  pinMode(UP, INPUT);
+  pinMode(DOWN, INPUT);
+  pinMode(ENTER, INPUT);
+  
+  pinMode(LEDA, OUTPUT);
+  pinMode(LEDB, OUTPUT);
+  pinMode(LEDC, OUTPUT);
+  pinMode(LEDD, OUTPUT);
+  
+  // initialize serial:
+  Serial.begin(9600);
+  Serial.setTimeout(0);
+  while (!Serial) {} ;
+  
+}
+
+void loop() {
+  // set the cursor to column 0, line 1
+  // (note: line 1 is the second row, since counting begins with 0):
+  //lcd.setCursor(0, 1);
+  // print the number of seconds since reset:
+  //lcd.print("Menu");
+  
+  
+  buttonStateUP = digitalRead(UP);			//leitura da entrada digital
+  buttonStateDOWN = digitalRead(DOWN);
+  buttonStateENTER = digitalRead(ENTER);
+
+  
+  	//Incrementa/decrementa index
+      if (buttonStateUP == HIGH) {		
+        Index++;}			
+      if (buttonStateDOWN == HIGH) {
+        Index--;}			
+     
+  	// Mantem Indexador dentro do limite de opcoes do menu
+  	switch (Menu) {
+    case 0:
+      if (Index<=1){Index=Index;}
+  		else{Index=1;}
+      if (Index<=-1){Index=0;}
+      break;	
+	case 1:			
+      if (Index<=4 && Menu ==1){Index=Index;}
+  		else{Index=4;}
+      if (Index<=-1){Index=0;}
+      break;
+    }
+  
+   Serial.print(Menu);
+   Serial.println(Index);
+  
+    //Muda de menu
+  	  if (buttonStateENTER == HIGH && Index == 0 && Menu == 0){
+            lcd.clear();
+        	Index==0;
+        	Menu=1;}
+      
+      if (buttonStateENTER == HIGH && Index == 4 && Menu == 1){
+            lcd.clear();
+        	Index==0;
+        	Menu=0;}
+  
+  
+  	 //Atualiza o LCD          
+         if (Index == 0 && Menu == 0) {
+            lcd.setCursor(0, 1);
+            lcd.print("Configurar");
+          } 
+
+         if (Index == 1 && Menu == 0) {
+            lcd.setCursor(0, 1);
+            lcd.print("Ac.Manual  ");
+          }
+  		
+ 		 if (Index == 0 && Menu == 1) {
+            lcd.setCursor(0, 0);
+            lcd.print("LED A  ");
+          }
+  			
+  		 if (Index == 1 && Menu == 1) {
+            lcd.setCursor(0, 0);
+            lcd.print("LED B  ");
+          }
+  
+  		 if (Index == 2 && Menu == 1) {
+            lcd.setCursor(0, 0);
+            lcd.print("LED C");
+          }
+          
+  		 if (Index == 3 && Menu == 1) {
+            lcd.setCursor(0, 0);
+            lcd.print("LED D  ");
+          }
+
+		 if (Index == 4 && Menu == 1) {
+            lcd.setCursor(0, 0);
+            lcd.print("Voltar  ");
+          }
+
+}
+ 
