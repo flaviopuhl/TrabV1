@@ -1,8 +1,3 @@
 # TrabV1
 
-Menu
-
-Map
-
-Mills
-
+https://www.tinkercad.com/things/1bDwED0wmjw-trabv1/editel
